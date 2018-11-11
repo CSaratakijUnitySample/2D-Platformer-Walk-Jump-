@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     float gravity;
 
     [SerializeField]
-    float maxVerticalForce;
+    float terminalVelocity;
 
     [SerializeField]
     Transform ground;
@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
 
     Vector2 inputVector;
     Vector2 velocity;
+    Vector2 rayDirection;
 
     RaycastHit2D hit;
     Rigidbody2D rigid;
@@ -51,6 +52,7 @@ public class PlayerController : MonoBehaviour
     {
         isPressedJump = false;
         isCanJump = false;
+        rayDirection = new Vector2(1.0f, -1.0f);
         rigid = GetComponent<Rigidbody2D>();
     }
 
@@ -63,7 +65,7 @@ public class PlayerController : MonoBehaviour
 
     void CheckGround()
     {
-        hit = Physics2D.Raycast(ground.position, ground.right, 0.2f, groundLayer);
+        hit = Physics2D.Raycast(ground.position, rayDirection, 0.2f, groundLayer);
         isCanJump = (hit.collider != null);
     }
 
@@ -76,7 +78,7 @@ public class PlayerController : MonoBehaviour
         }
         else {
             velocity.y -= gravity;
-            velocity.y = Mathf.Clamp(velocity.y, -maxVerticalForce, jumpForce);
+            velocity.y = Mathf.Clamp(velocity.y, -terminalVelocity, jumpForce);
         }
 
         rigid.velocity = (velocity * Time.deltaTime);
